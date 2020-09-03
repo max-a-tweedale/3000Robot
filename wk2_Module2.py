@@ -35,11 +35,7 @@ while(True):
     cv2.imshow('frame', frame)
 
     key = cv2.waitKey(0) & 0xFF
-    if key == ord('d'):
-        #toggle draw, erase & off
-        changeMode()
-    elif key == ord('c'):
-        #toggle colout
+   
 
     if key == ord('q'):
         break
