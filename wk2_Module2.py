@@ -4,14 +4,17 @@ import cv2
 x = []
 y = []
 cap = cv2.VideoCapture(0)
-class pen():
+class PenController():
     def __init__(self):
         self.mode = 0
-        self.colour = 0
+        self.colourInt = 0
         self.colours = ['red', 'green', 'blue']
+        self.coloursRGB = [(255,0,0), (0,255,0), (0,0,255)]
+        self.colour = self.coloursRGB[self.colourInt]
         self.modes = ['off', 'draw', 'erase']
     def changeMode(self):
         #When called toggles the mode
+        #returns string of mode name
         self.mode +=1
         if self.mode > len(self.modes):
             self.mode = 0
@@ -19,10 +22,19 @@ class pen():
 
     def changeColour(self):
         #When called toggles the pen colour
-        self.colour +=1
-        if self.colour > len(self.colours):
-            self.colour = 0
-        return self.colours[self.colour]
+        #returns colour RGB touple
+        self.colourInt +=1
+        if self.colourInt > len(self.colours):
+            self.colourInt = 0
+        self.colour = self.coloursRGB[self.colourInt]
+        return self.coloursRGB[self.colourInt]
+    
+    def currentColour(self):
+        #when called it returns touple of
+        #string of colour ie 'red' and RGB value for current colour
+        return self.colours[self.colourInt], self.coloursRGB[self.colourInt]
+    
+pen = PenController()
 
 while(True):
     # Capture frame-by-frame
@@ -65,7 +77,7 @@ while(True):
         
     #Drawing
     for i in range(len(x)):
-        cv2.circle(frame,(x[i],y[i]),3,(255,0,0),3)
+        cv2.circle(frame,(x[i],y[i]),3,pen.colour,3)
 
 
 
