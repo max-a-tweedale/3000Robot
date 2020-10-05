@@ -10,13 +10,13 @@ from imutils.video import VideoStream
 from imutils.video import FPS
 
 arg_p = argparse.ArgumentParser()
-arg_p.add_argument('-t', '--tracker', type=str, default='kfc', help="OpenCV object tracker type")
+arg_p.add_argument('-t', '--tracker', type=str, default='kcf', help="OpenCV object tracker type")
 args = vars(arg_p.parse_args())
 
 ## OpenCV version must be greater than 3.4
 
 CV2_Trackers = {
-    'kfc': cv.TrackerKCF_create,
+    'kcf': cv.TrackerKCF_create,
     'csrt': cv.TrackerCSRT_create,
     'boosting': cv.TrackerBoosting_create,
     'mil': cv.TrackerMIL_create,
@@ -25,6 +25,11 @@ CV2_Trackers = {
     'mosse': cv.TrackerMOSSE_create
 }
 
+def moveCamera(Head):
+    (x,y) = Head
+    print(x)
+
+
 tracker = CV2_Trackers[args['tracker']]()
 
 ## Using webcam
@@ -32,11 +37,14 @@ print("Webcam Turning on...")
 vs = VideoStream(src=0).start()
 time.sleep(1.0)
 
+print("Press g to grab head\n Press q to exit\n Press exc to redo grab")
+
 #Initialise tracking box
 initBox = None
 #Estimation of frames per second
 fps = None
 Head = (None,None)
+
 #Main loop
 while True:
     frame = vs.read()
@@ -59,7 +67,8 @@ while True:
 
             cv.rectangle(frame, (x,y), (x+w, y+h), (0,255,0), 2)
             cv.circle(frame, (x+int(w/2),y+int(h/2)), 2, (255,0,0), 2)
-            HeadCentre = (x+int(w/2),y+int(h/2))
+            Head = (x+int(w/2), y+int(h/2))
+            moveCamera(Head)
 
         fps.update()
         fps.stop()
