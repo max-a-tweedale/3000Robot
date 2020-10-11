@@ -46,18 +46,19 @@ while(True):
 	
 	for pic, contour in enumerate(contours): 
 		area = cv2.contourArea(contour) 
-    # This value can be changed as well
+		
+		# This value can be changed as well
 		if(area > 300): 
 			x, y, w, h = cv2.boundingRect(contour) 
 			frame = cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 0, 255), 2) 
 			cv2.putText(frame, "Red Colour", (x, y), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255))
-     
-      # find the centroid point and label it
-      x2 = x + int(w / 2)
-      y2 = y + int(h / 2)
-      cv2.circle(frame, (x2, y2), 2, (0, 0, 255), -1)
-      text = "x: " + str(x2) + ", y: " + str(y2)
-      cv2.putText(frame, text, (x2 - 10, y2 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255))
+			
+			# find the centroid point and label it
+			x2 = x + int(w / 2)
+			y2 = y + int(h / 2)
+			cv2.circle(frame, (x2, y2), 2, (0, 0, 255), -1)
+			text = "x: " + str(x2) + ", y: " + str(y2)
+			cv2.putText(frame, text, (x2 - 10, y2 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255))
 
 
 	# Creating contour to track green color 
@@ -69,13 +70,13 @@ while(True):
 			x, y, w, h = cv2.boundingRect(contour) 
 			frame = cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2) 
 			cv2.putText(frame, "Green Colour", (x, y), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0))
-     
-      # find the centroid point and label it
-      x2 = x + int(w / 2)
-      y2 = y + int(h / 2)
-      cv2.circle(frame, (x2, y2), 2, (0, 255, 0), -1)
-      text = "x: " + str(x2) + ", y: " + str(y2)
-      cv2.putText(frame, text, (x2 - 10, y2 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0))
+			
+			# find the centroid point and label it
+			x2 = x + int(w / 2)
+			y2 = y + int(h / 2)
+			cv2.circle(frame, (x2, y2), 2, (0, 255, 0), -1)
+			text = "x: " + str(x2) + ", y: " + str(y2)
+			cv2.putText(frame, text, (x2 - 10, y2 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0))
 
 
 	# Creating contour to track blue color 
@@ -87,13 +88,13 @@ while(True):
 			x, y, w, h = cv2.boundingRect(contour) 
 			frame = cv2.rectangle(frame, (x, y), (x + w, y + h), (255, 0, 0), 2) 
 			cv2.putText(frame, "Blue Colour", (x, y), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0))
-     
-      # find the centroid point and label it
-      x2 = x + int(w / 2)
-      y2 = y + int(h / 2)
-      cv2.circle(frame, (x2, y2), 2, (255, 0, 0), -1)
-      text = "x: " + str(x2) + ", y: " + str(y2)
-      cv2.putText(frame, text, (x2 - 10, y2 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0))
+			
+			# find the centroid point and label it
+			x2 = x + int(w / 2)
+			y2 = y + int(h / 2)
+			cv2.circle(frame, (x2, y2), 2, (255, 0, 0), -1)
+			text = "x: " + str(x2) + ", y: " + str(y2)
+			cv2.putText(frame, text, (x2 - 10, y2 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0))
 
 			
 	# Program Termination 
