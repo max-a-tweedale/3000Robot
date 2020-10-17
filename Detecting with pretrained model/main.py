@@ -41,9 +41,10 @@ while True:
             cv2.putText(img, str(round(confidence*100, 2)), (box[0]+200, box[1]+30),
                         cv2.FONT_HERSHEY_COMPLEX, 1, (0, 255, 0), 2)
             
-            center_X = box[0] + box[2] / 2
-            center_Y = box[1] + box[3] / 2
+            center_X = round(box[0] + box[2] / 2)
+            center_Y = round(box[1] + box[3] / 2)
             print(center_X, center_Y)
+            cv2.circle(img, (center_X, center_Y), 2, (0, 0, 255), -1)
 
     cv2.imshow("Output", img)
     cv2.waitKey(1)
