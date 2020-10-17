@@ -41,8 +41,8 @@ while True:
 
             # From there, we can select a specific category and get its centroid point
             # Add more code...
-            center_X = (box[0] + box[2]) / 2
-            center_Y = (box[1] + box[3]) / 2
+            center_X = box[0] + box[2] / 2
+            center_Y = box[1] + box[3] / 2
             print(center_X, center_Y)
 
     cv2.imshow("Output", img)
