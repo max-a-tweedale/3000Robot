@@ -31,6 +31,8 @@ while True:
 
     if len(classIds) != 0:
         for classId, confidence, box in zip(classIds.flatten(), confs.flatten(), bbox):
+            # The specific categoris can be selected by classID numbers in 'coco.names'
+            # if classId == 1:
             cv2.rectangle(img, box, color=(0, 255, 0), thickness=2)
             cv2.putText(img, classNames[classId-1].upper(), (box[0]+10, box[1]+30),
                         cv2.FONT_HERSHEY_COMPLEX, 1, (0, 255, 0), 2)
@@ -38,9 +40,7 @@ while True:
             # Shows the probability, which can be deleted
             cv2.putText(img, str(round(confidence*100, 2)), (box[0]+200, box[1]+30),
                         cv2.FONT_HERSHEY_COMPLEX, 1, (0, 255, 0), 2)
-
-            # From there, we can select a specific category and get its centroid point
-            # Add more code...
+            
             center_X = box[0] + box[2] / 2
             center_Y = box[1] + box[3] / 2
             print(center_X, center_Y)
