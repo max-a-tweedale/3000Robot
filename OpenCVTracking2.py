@@ -25,9 +25,15 @@ CV2_Trackers = {
     'mosse': cv.TrackerMOSSE_create
 }
 
-def moveCamera(Head):
+def moveCamera(Head,frame_w):
+    mid_frame = int(frame_w/2)
     (x,y) = Head
-    print(x)
+    kp =.5
+    error = mid_frame-x
+    output = kp*error
+    
+
+
 
 
 tracker = CV2_Trackers[args['tracker']]()
@@ -68,7 +74,7 @@ while True:
             cv.rectangle(frame, (x,y), (x+w, y+h), (0,255,0), 2)
             cv.circle(frame, (x+int(w/2),y+int(h/2)), 2, (255,0,0), 2)
             Head = (x+int(w/2), y+int(h/2))
-            moveCamera(Head)
+            moveCamera(Head,frame_w)
 
         fps.update()
         fps.stop()
@@ -82,6 +88,10 @@ while True:
 
         for (i, (k, v)) in enumerate(info):
             text = "{}: {}".format(k, v)
+            black = (179, 179, 255)
+            cv.line(img= frame, pt1= (int(frame_w/2),0), pt2= (int(frame_w/2),frame_h), color =black,thickness = 2, lineType = 8, shift = 0)
+
+
             cv.putText(frame, text, (10, frame_h - ((i * 20) + 20)), cv.FONT_HERSHEY_SIMPLEX, 0.6, (0, 0, 255), 2)
 
     #display frame
