@@ -1,7 +1,6 @@
 import numpy as np
 import cv2
 
-
 def undistortion(img, mtx, dist):
     h, w = img.shape[:2]
     newcameramtx, roi = cv2.getOptimalNewCameraMatrix(mtx, dist, (w, h), 1, (w, h))
