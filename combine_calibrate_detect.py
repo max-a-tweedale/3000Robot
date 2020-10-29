@@ -113,7 +113,6 @@ if __name__ == '__main__':
         frame = cv2.flip(frame, +1)
         frame = undistortion(frame, mtx, dist[0:4])
         # Display the resulting frame
-        cv2.imshow('Now is detection', frame)
 
         # Detecting objects and give out centroid point
         # The key should be replaced by an input signal (when the arm at its original position)
@@ -133,10 +132,12 @@ if __name__ == '__main__':
                 center_Y = round(box[1] + box[3] / 2)
                 print(classNames[classId-1])
                 print(center_X, center_Y)
+                cv2.rectangle(frame,(box[0],box[1]),(box[2],box[3]),(0,255,0),3)
 
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
-
+        cv2.imshow('Now is detection', frame)
+          
 
     cap.release()
     cv2.destroyAllWindows()
