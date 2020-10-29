@@ -95,7 +95,7 @@ void setup() {
   servo4.attach(3);
 
   //Default positions for servos
-   servo1.write(0);
+   servo1.write(180);
    servo2.write(90);
    servo3.write(90);
    servo4.write(90);

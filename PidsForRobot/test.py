@@ -15,7 +15,7 @@ from kinematic_model import EEZYbotARM_Mk2
 from serial_communication import arduinoController
 
 # Insert your Arduino serial port here to initialise the arduino controller
-myArduino = arduinoController(port="/dev/ttyACM0")
+myArduino = arduinoController(port="/dev/ttyUSB0") #ACM0 for Max, USB0 for Josh
 myArduino.openSerialPort()
 
 # Initialise kinematic model with initial joint angles (home position)
@@ -26,7 +26,7 @@ x_pos = 200  # mm
 y_pos = 0  # mm
 z_pos = 100  # mm
 # Define end effector open and closed angle
-servoAngle_EE_closed = 10
+servoAngle_EE_closed = 20
 servoAngle_EE_open = 90
 
 a1, a2, a3 = myVirtualRobotArm.inverseKinematics(x_pos, y_pos, z_pos)
