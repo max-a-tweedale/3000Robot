@@ -70,8 +70,8 @@ def moveCameraPID(Head,frame_h,frame_w):
        
     #proportional, integral and derivative constants
     Kp = .1
-    Ki = .0
-    Kd = .0 
+    Ki = .10
+    Kd = .10 
     
     
     errorx = mid_framex - x #difference between disired pos and actual pos
@@ -83,7 +83,7 @@ def moveCameraPID(Head,frame_h,frame_w):
     x_pos = x_pos + ut
     
     errory = mid_framey - y
-    yt = (.1 * errory)
+    yt = (.2 * errory)
     a1 = a1 + yt
     
     #ensuring servo output is within physical limitations
@@ -122,7 +122,7 @@ def moveCameraPID(Head,frame_h,frame_w):
         timer = endoftimer - startoftimer
         
     print(errorx,' and ',errory)
-    if errorx<=2 and errory<=2:
+    if abs(errorx)<=2 and abs(errory)<=2:
         x_pos = x_pos  # mm
         y_pos = y_pos  # mm
         z_pos = 20  # mm
