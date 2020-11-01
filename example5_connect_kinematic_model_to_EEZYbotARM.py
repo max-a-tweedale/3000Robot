@@ -3,7 +3,7 @@ from easyEEZYbotARM.kinematic_model import EEZYbotARM_Mk2
 from easyEEZYbotARM.serial_communication import arduinoController
 
 # Insert your Arduino serial port here to initialise the arduino controller
-myArduino = arduinoController(port="COM8")
+myArduino = arduinoController(port='/dev/ttyUSB0')
 myArduino.openSerialPort()
 
 # Initialise kinematic model with initial joint angles (home position)
@@ -13,7 +13,7 @@ myVirtualRobotArm = EEZYbotARM_Mk2(
 myVirtualRobotArm.plot()
 
 # Define end effector open and closed angle
-servoAngle_EE_closed = 10
+servoAngle_EE_closed = 20
 servoAngle_EE_open = 90
 
 # Calculate the current servo angles
@@ -23,7 +23,7 @@ servoAngle_q1, servoAngle_q2, servoAngle_q3 = myVirtualRobotArm.map_kinematicsTo
 myArduino.communicate(data=myArduino.composeMessage(servoAngle_q1=servoAngle_q1,
                                                     servoAngle_q2=servoAngle_q2,
                                                     servoAngle_q3=servoAngle_q3,
-                                                    servoAngle_EE=servoAngle_EE_open))
+                                                    servoAngle_EE=servoAngle_EE_closed))
 
 
 # Assign new cartesian position where we want the robot arm end effector to move to

@@ -1,7 +1,6 @@
 
 
 
-
 /*
 
    IMPORTANT: This program receives data over the serial monitor. This data must be in the form of:
@@ -18,6 +17,7 @@
 #include <Arduino.h>
 #include <Servo.h>
 #include "ServoEasing.h"
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
   Definitions                                                                    *
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -93,30 +93,21 @@ void setup() {
   Serial.println(F("START " __FILE__ "\r\nVersion " VERSION " from " __DATE__));
 
   //Attach servo to pin
-  servo1.attach(3);
+  servo1.attach(10);
   servo2.attach(6);
-  servo3.attach(9);
-  servo4.attach(11);
+  servo3.attach(5);
+  servo4.attach(3);
 
-  servo1.setEasingType(EASE_CUBIC_IN_OUT);
-  servo2.setEasingType(EASE_CUBIC_IN_OUT);
-  servo3.setEasingType(EASE_CUBIC_IN_OUT);
-  servo4.setEasingType(EASE_CUBIC_IN_OUT);
-
-  servo1.setSpeed(40);
-  servo2.setSpeed(40);
-  servo3.setSpeed(40);
-  servo4.setSpeed(40);
   //Default positions for servos
-   servo1.write(0);
-   servo2.write(90);
-   servo3.write(90);
-   servo4.write(90);
+   servo1.startEaseTo(0,1500);
+   servo2.startEaseTo(90,1500);
+   servo3.startEaseTo(90, 1500);
+   servo4.startEaseTo(90, 1500);
    
 
 
   // Just wait for servos to reach position
-  delay(500); // delay() is OK in setup as it only happens once
+  delay(1500); // delay() is OK in setup as it only happens once
 
   // tell the PC we are ready
   Serial.println("<Arduino is ready>");
@@ -139,7 +130,6 @@ void loop() {
     actionInstructionsFromPC(); // Arrange for things to move, beep, light up
     replyToPC(); // Reply to PC
   }
-
 
 
 }
@@ -180,45 +170,45 @@ void actionInstructionsFromPC() {
   if (servoAngle_q1 != last_servoAngle_q1) {
     Serial.println(F("Servo 1 moving to position using interrupts"));
     if (servoAngle_q1<SERVO1MIN){
-      servo1.startEaseTo(SERVO1MIN);
+      servo1.write(SERVO1MIN);
     }
     else if (servoAngle_q1>SERVO1MAX){
-      servo1.startEaseTo(SERVO1MAX);
+      servo1.write(SERVO1MAX);
     }
     else {
-    servo1.startEaseTo(servoAngle_q1);
+    servo1.write(servoAngle_q1);
     }
   }
 
   if (servoAngle_q2 != last_servoAngle_q2) {
     Serial.println(F("Servo 2 moving to position using interrupts"));
     if (servoAngle_q2<SERVO2MIN){
-      servo2.startEaseTo(SERVO2MIN);
+      servo2.write(SERVO2MIN);
     }
     else if (servoAngle_q2>SERVO2MAX){
-      servo2.startEaseTo(SERVO2MAX);
+      servo2.write(SERVO2MAX);
     }
     else {
-    servo2.startEaseTo(servoAngle_q2);
+    servo2.write(servoAngle_q2);
     }
   }
   
   if (servoAngle_q3 != last_servoAngle_q3) {
     Serial.println(F("Servo 3 moving to position using interrupts"));
     if (servoAngle_q3<SERVO3MIN){
-      servo3.startEaseTo(SERVO3MIN);
+      servo3.write(SERVO3MIN);
     }
     else if (servoAngle_q3>SERVO3MAX){
-      servo3.startEaseTo(SERVO3MAX);
+      servo3.write(SERVO3MAX);
     }
     else {
-    servo3.startEaseTo(servoAngle_q3);
+    servo3.write(servoAngle_q3);
     }
   }
 
   if (servoAngle_EE != last_servoAngle_EE) {
     Serial.println(F("Servo EE moving to position using interrupts"));
-    servo4.startEaseTo(servoAngle_EE);
+    servo4.write(servoAngle_EE);
   }
 
   // Store current joint angle

@@ -10,14 +10,31 @@ from imutils.video import VideoStream
 from imutils.video import FPS
 
 #servo stuff
-import RPi.GPIO as GPIO
+#import RPi.GPIO as GPIO
+#import wiringpi
+#import pigpio
+
 import time
-servoPin = 12
-GPIO.setwarnings(False)
-GPIO.setmode(GPIO.BOARD)
-GPIO.setup(servoPin,GPIO.OUT)
-pwm = GPIO.PWM(servoPin,100)
-pwm.start(0)
+#### RPI GPIO software driving
+# servoPin = 12
+# GPIO.setwarnings(False)
+# GPIO.setmode(GPIO.BOARD)
+# GPIO.setup(servoPin,GPIO.OUT)
+# pwm = GPIO.PWM(servoPin,100)
+# pwm.start(0)
+
+#### Using wiringPi but opencv not on root install
+# servoPin = 1 #GPIO pin 12
+# wiringpi.wiringPiSetup()
+# wiringpi.pinMode(servoPin, 2)
+# wiringpi.pwmWrite(servoPin,0)
+
+### Using pigpio
+import pigpio
+Servo = pigpio.pi()
+Servo.set_mode(12, pigpio.OUTPUT)
+Servo.set_PWM_frequency(12, 8000) # set freq to 8kHz
+Servo.set_PWM_dutycycle(12, 128)
 
 arg_p = argparse.ArgumentParser()
 arg_p.add_argument('-t', '--tracker', type=str, default='mosse', help="OpenCV object tracker type")
@@ -35,7 +52,7 @@ CV2_Trackers = {
     'mosse': cv.TrackerMOSSE_create
 }
 
-servoPos =12
+servoPos = 128
 def moveCamera(Head,frame_w,servoPos):
     (x,y) = Head
     mid_frame = int(frame_w/2)
@@ -43,10 +60,13 @@ def moveCamera(Head,frame_w,servoPos):
     error = mid_frame - x
     output = -kp*error
     
-    servoPos = 12 + output
+    servoPos = round(128 + output)
     print(servoPos)
-    if servoPos >= 1 and servoPos<=24:
-        pwm.ChangeDutyCycle(servoPos)
+    if servoPos >= 1 and servoPos<=256:
+        #pwm.ChangeDutyCycle(servoPos)
+        #wiringpi.pwmWrite(servoPos)
+        Servo.set_PWM_dutycycle(12, servoPos)
+
 
 tracker = CV2_Trackers[args['tracker']]()
 

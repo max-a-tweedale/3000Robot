@@ -40,7 +40,7 @@ while True:
             # Shows the probability, which can be deleted
             cv2.putText(img, str(round(confidence*100, 2)), (box[0]+200, box[1]+30),
                         cv2.FONT_HERSHEY_COMPLEX, 1, (0, 255, 0), 2)
-            
+
             center_X = round(box[0] + box[2] / 2)
             center_Y = round(box[1] + box[3] / 2)
             print(center_X, center_Y)

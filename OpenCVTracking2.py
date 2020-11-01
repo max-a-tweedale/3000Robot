@@ -9,8 +9,11 @@ import argparse
 from imutils.video import VideoStream
 from imutils.video import FPS
 
+#servo stuff
+
+
 arg_p = argparse.ArgumentParser()
-arg_p.add_argument('-t', '--tracker', type=str, default='kcf', help="OpenCV object tracker type")
+arg_p.add_argument('-t', '--tracker', type=str, default='mosse', help="OpenCV object tracker type")
 args = vars(arg_p.parse_args())
 
 ## OpenCV version must be greater than 3.4
@@ -25,15 +28,14 @@ CV2_Trackers = {
     'mosse': cv.TrackerMOSSE_create
 }
 
+
 def moveCamera(Head,frame_w):
-    mid_frame = int(frame_w/2)
     (x,y) = Head
-    kp =.5
-    error = mid_frame-x
+    mid_frame = int(frame_w/2)
+    kp = 0.5
+    error = mid_frame - x
     output = kp*error
-    
-
-
+    print(error)
 
 
 tracker = CV2_Trackers[args['tracker']]()
@@ -93,6 +95,9 @@ while True:
 
 
             cv.putText(frame, text, (10, frame_h - ((i * 20) + 20)), cv.FONT_HERSHEY_SIMPLEX, 0.6, (0, 0, 255), 2)
+
+            black = (179,179,255)
+            cv.line(img = frame, pt1 = (int(frame_w/2),0), pt2 = (int(frame_w/2),frame_h), color = black, thickness =2, lineType = 8, shift = 0)
 
     #display frame
     cv.imshow("Stream", frame)
