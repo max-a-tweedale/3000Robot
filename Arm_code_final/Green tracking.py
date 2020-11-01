@@ -8,8 +8,12 @@ def findGreen(img):
     frame = img.copy()
     kernelOpen = np.ones((5, 5))
     kernelClose = np.ones((20, 20))
-    lowerBound = np.array([32, 80, 30])
-    upperBound = np.array([102, 255, 255])
+    #green
+    #lowerBound = np.array([32, 80, 30])
+    #upperBound = np.array([102, 255, 255])
+    #black
+    lowerBound = np.array([0, 0, 0])
+    upperBound = np.array([360, 127, 51])
     frame = cv.cvtColor(frame, cv.COLOR_RGB2HSV)
     frame = cv.inRange(frame, lowerBound, upperBound)
     frame = cv.morphologyEx(frame, cv.MORPH_OPEN, kernelOpen)
