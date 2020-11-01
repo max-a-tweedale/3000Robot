@@ -362,7 +362,20 @@ class EEZYbotARM:
         #q3_max = q3_max * pi / 180
 
         # Find the value for the fist angle
-        q1 = atan(y_EE/x_EE) # Qa
+        try:
+            q1 = atan(abs(y_EE/x_EE))# Qa
+            print("Q1 ", q1*180/pi)
+        except ZeroDivisionError:
+            q1 = pi/2*y_EE/abs(y_EE) # if x == 0
+        if x_EE >= 0 and y_EE >= 0:
+            q1 = q1
+        elif x_EE < 0 and y_EE >= 0:
+            q1 = np.pi - q1
+        elif x_EE < 0 and y_EE < 0:
+            q1=  -np.pi + q1
+        elif x_EE >= 0 and y_EE < 0:
+            q1= -q1
+
         # Find the values for the position of joint #4 for x, y, z
         x_4 = x_EE - (L4 * cos(q1))
         y_4 = y_EE - (L4 * sin(q1))
@@ -373,10 +386,13 @@ class EEZYbotARM:
         print("Q3 = ", Q3*180/pi)
         Q2 = atan( round( ((z_4-L1)*(L2 + L3*cos(Q3))*cos(q1) - x_4*L3*sin(Q3)) / (x_4*(L2+L3*cos(Q3)) + (z_4-L1)*L3*sin(Q3)*cos(q1)) ,5))
         Q2_1 = atan( (z_4-L1) / sqrt(x_4**2 + y_4**2) ) - atan( (sin(Q3)*L3) / (L2 + cos(Q3)*L3)) # alternate q2 calc
+
         print("Q2 = ", Q2*180/pi, "Q2_1: ", Q2_1*180/pi)
         q2 = Q2 #pi / 2 - Q2
         if q2 < 0:
-            q2 += pi
+            q2 = Q2_1
+            if q2 < 0:
+                q2 += pi
         q3 = Q3
 
         # Original workings
