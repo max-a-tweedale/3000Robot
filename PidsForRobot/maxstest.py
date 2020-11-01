@@ -15,7 +15,7 @@ from kinematic_model import EEZYbotARM_Mk2
 from serial_communication import arduinoController
 
 # Insert your Arduino serial port here to initialise the arduino controller
-myArduino = arduinoController(port="/dev/ttyACM0")
+myArduino = arduinoController(port="/dev/ttyUSB0") #ACM0 for Max, USB0 for Josh
 myArduino.openSerialPort()
 
 # Initialise kinematic model with initial joint angles (home position)
@@ -26,19 +26,23 @@ x_pos = 200  # mm
 y_pos = 0  # mm
 z_pos = 100  # mm
 # Define end effector open and closed angle
+<<<<<<< HEAD
 servoAngle_EE_closed = 10
+servoAngle_EE_open = 120
+=======
+servoAngle_EE_closed = 20
 servoAngle_EE_open = 90
+>>>>>>> 1cac37328ce86cbcca7eea11fcfdabf1cb1d3627
 
 a1, a2, a3 = myVirtualRobotArm.inverseKinematics(x_pos, y_pos, z_pos)
 myVirtualRobotArm.updateJointAngles(q1=a1, q2=a2, q3=a3)
 # Calculate the current servo angles
 servoAngle_q1, servoAngle_q2, servoAngle_q3 = myVirtualRobotArm.map_kinematicsToServoAngles()
-
 # Send the movement command to the arduino. The physical EEZYbotARM will move to this position
-myArduino.communicate(data=myArduino.composeMessage(servoAngle_q1=servoAngle_q1,
-                                                    servoAngle_q2=servoAngle_q2,
-                                                    servoAngle_q3=servoAngle_q3,
-                                                    servoAngle_EE=servoAngle_EE_open))
+myArduino.communicate(data=myArduino.composeMessage(servoAngle_q1=0,
+                                                    servoAngle_q2=90,
+                                                    servoAngle_q3=90,
+                                                    servoAngle_EE=90))
 #initialising variables that store values for PID
 integral = 0
 prev_errorx = 0
@@ -47,6 +51,8 @@ timerFlag = 0
 startoftimer = 0
 endoftimer = 0
 a1 =90
+prev_errory = 0
+integraly = 0 
 #This moveCamera function takes in the width of the frame and the position of the head. It outputs the position of the servo 
 def moveCameraPID(Head,frame_h,frame_w): 
     #global variables the function alters
@@ -61,7 +67,8 @@ def moveCameraPID(Head,frame_h,frame_w):
     global y_pos
     global z_pos
     global a1
-    
+    global prev_errory
+    global integraly
     (x,y) = Head
     
     #finding centre point of frame
@@ -69,9 +76,9 @@ def moveCameraPID(Head,frame_h,frame_w):
     mid_framey = int(frame_h/2)
        
     #proportional, integral and derivative constants
-    Kp = .1
-    Ki = .10
-    Kd = .10 
+    Kp = .01
+    Ki = .010
+    Kd = .010 
     
     
     errorx = mid_framex - x #difference between disired pos and actual pos
@@ -81,10 +88,18 @@ def moveCameraPID(Head,frame_h,frame_w):
     ut = -(Kp * errorx + Ki * integral + Kd * derivative) 
     
     x_pos = x_pos + ut
+    Kpy = 0.01
+    Kiy = 0.01
+    Kdy = 0.1
+    
     
     errory = mid_framey - y
-    yt = (.2 * errory)
+    integraly +=errory
+    derivativey = errory - prev_errory
+    print(errory)
+    yt = (Kpy * errory + Kiy * integraly + Kdy * derivativey)
     a1 = a1 + yt
+    prev_errory = errory
     
     #ensuring servo output is within physical limitations
     #if servoPos > maxServoPos:
@@ -104,7 +119,6 @@ def moveCameraPID(Head,frame_h,frame_w):
                                                     servoAngle_q2=servoAngle_q2,
                                                     servoAngle_q3=servoAngle_q3,
                                                     servoAngle_EE=servoAngle_EE_open))
-    
     prev_errorx =errorx
     
     #checking to see if head is out of the 10% boundary        
@@ -122,10 +136,10 @@ def moveCameraPID(Head,frame_h,frame_w):
         timer = endoftimer - startoftimer
         
     print(errorx,' and ',errory)
-    if abs(errorx)<=2 and abs(errory)<=2:
-        x_pos = x_pos  # mm
+    if abs(errorx)<=10 and abs(errory)<=10:
+        x_pos = x_pos - 10 # mm
         y_pos = y_pos  # mm
-        z_pos = 20  # mm
+        z_pos = 40  # mm
         
         a, a2, a3 = myVirtualRobotArm.inverseKinematics(x_pos, y_pos, z_pos)
         myVirtualRobotArm.updateJointAngles(q1=a1, q2=a2, q3=a3)
@@ -136,16 +150,76 @@ def moveCameraPID(Head,frame_h,frame_w):
         myArduino.communicate(data=myArduino.composeMessage(servoAngle_q1=a1,
                                                     servoAngle_q2=servoAngle_q2,
                                                     servoAngle_q3=servoAngle_q3,
-                                                    servoAngle_EE=servoAngle_EE_closed))
-        myArduino.closeSerialPort()
-
+                                                    servoAngle_EE=servoAngle_EE_open))
+        time.sleep(1.5)
         
+        myArduino.communicate(data=myArduino.composeMessage(servoAngle_q1=a1,
+                                                    servoAngle_q2=servoAngle_q2,
+                                                    servoAngle_q3=servoAngle_q3,
+                                                    servoAngle_EE=servoAngle_EE_closed))
+        time.sleep(1.5)
+        x_pos = x_pos - 20 # mm
+        y_pos = y_pos  # mm
+        z_pos = 200  # mm
+        
+        a, a2, a3 = myVirtualRobotArm.inverseKinematics(x_pos, y_pos, z_pos)
+        myVirtualRobotArm.updateJointAngles(q1=a1, q2=a2, q3=a3)
+# Calculate the current servo angles
+        servoAngle_q1, servoAngle_q2, servoAngle_q3 = myVirtualRobotArm.map_kinematicsToServoAngles()
+        myArduino.communicate(data=myArduino.composeMessage(servoAngle_q1=a1,
+                                                    servoAngle_q2=servoAngle_q2,
+                                                    servoAngle_q3=servoAngle_q3,
+                                                    servoAngle_EE=servoAngle_EE_closed))
+        time.sleep(1.5)
+        
+        myArduino.communicate(data=myArduino.composeMessage(servoAngle_q1=180,
+                                                    servoAngle_q2=servoAngle_q2,
+                                                    servoAngle_q3=servoAngle_q3,
+                                                    servoAngle_EE=servoAngle_EE_closed))
+        time.sleep(1.5)
+        
+        #myArduino.closeSerialPort()
+def click_event(event, x, y, flags, params): 
+  
+    # checking for left mouse clicks 
+    if event == cv.EVENT_LBUTTONDOWN: 
+  
+        # displaying the coordinates 
+        # on the Shell 
+        print(x, ' ', y) 
+  
+        # displaying the coordinates 
+        # on the image window 
+        font = cv.FONT_HERSHEY_SIMPLEX 
+        cv.putText(frame, str(x) + ',' +
+                    str(y), (x,y), font, 
+                    1, (255, 0, 0), 2) 
+        cv.imshow('Stream', frame) 
+  
+    # checking for right mouse clicks      
+    if event==cv.EVENT_RBUTTONDOWN: 
+  
+        # displaying the coordinates 
+        # on the Shell 
+        print(x, ' ', y) 
+  
+        # displaying the coordinates 
+        # on the image window 
+        font = cv.FONT_HERSHEY_SIMPLEX 
+        b = frame[y, x, 0] 
+        g = frame[y, x, 1] 
+        r = frame[y, x, 2] 
+        cv.putText(frame, str(b) + ',' +
+                    str(g) + ',' + str(r), 
+                    (x,y), font, 1, 
+                    (255, 255, 0), 2) 
+        cv.imshow('Stream', frame)
 
 #def pickUpObject()
     
 #Setting up trackers    
 arg_p = argparse.ArgumentParser()
-arg_p.add_argument('-t', '--tracker', type=str, default='mosse', help="OpenCV object tracker type")
+arg_p.add_argument('-t', '--tracker', type=str, default='kcf', help="OpenCV object tracker type")
 args = vars(arg_p.parse_args())
 
 ## OpenCV version must be greater than 3.4
@@ -176,6 +250,7 @@ Head = (None,None)
 
 #Main loop
 
+        
 while True:
     frame = vs.read()
     
@@ -203,7 +278,7 @@ while True:
 
             cv.rectangle(frame, (x,y), (x+w, y+h), (0,255,0), 2) #draws rectangle around tracked face
             cv.circle(frame, (x+int(w/2),y+int(h/2)), 2, (255,0,0), 2)
-            
+
             Head = (x+int(w/2), y+int(h/2)) #this line calculates the centre point of the rectangle
             moveCameraPID(Head,frame_h,frame_w) #parse in centre of head and width of frame, this function will control the servo
 
@@ -242,6 +317,7 @@ while True:
         initBox = cv.selectROI("Stream", frame)
         tracker.init(frame, initBox)
         fps = FPS().start()
+        cv.setMouseCallback('Stream', click_event)
 
 
 vs.stop()

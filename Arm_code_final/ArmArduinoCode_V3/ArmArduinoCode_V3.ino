@@ -18,14 +18,17 @@
   Definitions                                                                    *
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 #define VERSION "3.1"
-const int SERVO1MAX = 180;
-const int SERVO1MIN = 0;
-const int SERVO2MAX = 145;
-const int SERVO2MIN =  80;
-const int SERVO3MAX = 120;
-const int SERVO3MIN = 60;
-const int SERVOEEMAX = 120;
-const int SERVOEEMIN = 60;
+
+// Josh
+const int SERVO1MAX = 20; // base speeds
+const int SERVO1MIN = -20; 
+const int SERVO2MAX = 145; // horiz pos
+const int SERVO2MIN =  70;
+const int SERVO3MAX = 110; // verti pos
+const int SERVO3MIN = 10;
+const int SERVOEEMAX = 90; // end pos
+const int SERVOEEMIN = 20;
+#define maxSpeeds 100
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
   Instantiating Servos                                                           *
@@ -54,17 +57,17 @@ unsigned long curMillis; // Variable for current time
 //unsigned long general_timer;
 
 // -------- Variables to hold the parsed data -------------
-float floatFromPC0 = 90.0; // initial values are mid range for joint angles
-float floatFromPC1 = 90.0;
-float floatFromPC2 = 90.0;
-float floatFromPC3 = 90.0;
+float floatFromPC0 = 20; // End  - initial values are mid range for joint angles
+float floatFromPC1 = 0.0; // q1
+float floatFromPC2 = 90.0; // q2
+float floatFromPC3 = 90.0; //q3
 int intFromPC0 = 1000; // inital values are acceptable movement times
 int intFromPC1 = 1000;
 int intFromPC2 = 1000;
 int intFromPC3 = 1000;
 float last_servoAngle_q1 = floatFromPC1; // initial values are mid range for joint angles
 float last_servoAngle_q2 = floatFromPC2;
-float last_servoAngle_q3 = intFromPC3;
+float last_servoAngle_q3 = floatFromPC3;
 float last_servoAngle_EE = floatFromPC0;
 
 
@@ -88,28 +91,27 @@ void setup() {
   // Just to know which program is running on my Arduino
   Serial.println(F("START " __FILE__ "\r\nVersion " VERSION " from " __DATE__));
 
-  //Attach servo to pin
-  servo1.attach(3);
+  servo1.attach(10, MICROSECONDS_FOR_ROTATING_SERVO_CLOCKWISE_MAX,
+            MICROSECONDS_FOR_ROTATING_SERVO_COUNTER_CLOCKWISE_MAX, maxSpeeds, -maxSpeeds); // Cont servo
   servo2.attach(6);
-  servo3.attach(9);
-  servo4.attach(11);
-
+  servo3.attach(5);
+  servo4.attach(3); // Normal Servo code
+ 
   servo1.setEasingType(EASE_CUBIC_IN_OUT);
   servo2.setEasingType(EASE_CUBIC_IN_OUT);
   servo3.setEasingType(EASE_CUBIC_IN_OUT);
   servo4.setEasingType(EASE_CUBIC_IN_OUT);
 
-  servo1.setSpeed(40);
-  servo2.setSpeed(40);
-  servo3.setSpeed(40);
-  servo4.setSpeed(40);
+  servo1.setSpeed(100);
+  servo2.setSpeed(30);
+  servo3.setSpeed(30);
+  servo4.setSpeed(50);
+  
   //Default positions for servos
-   servo1.write(0);
-   servo2.write(90);
-   servo3.write(90);
-   servo4.write(90);
-
-
+  servo1.write(last_servoAngle_q1);
+  servo2.write(last_servoAngle_q2);
+  servo3.write(last_servoAngle_q3);
+  servo4.write(last_servoAngle_EE); 
 
   // Just wait for servos to reach position
   delay(500); // delay() is OK in setup as it only happens once
@@ -170,19 +172,19 @@ void actionInstructionsFromPC() {
   int servoTime_q2 = intFromPC2;
   int servoTime_q3 = intFromPC3;
   int servoTime_EE = intFromPC0;
-
+  
 
   // Check if the joint angle has changed!
   if (servoAngle_q1 != last_servoAngle_q1) {
     Serial.println(F("Servo 1 moving to position using interrupts"));
     if (servoAngle_q1<SERVO1MIN){
-      servo1.startEaseTo(SERVO1MIN);
+      servo1.write(SERVO1MIN);
     }
     else if (servoAngle_q1>SERVO1MAX){
-      servo1.startEaseTo(SERVO1MAX);
+      servo1.write(SERVO1MAX);
     }
     else {
-    servo1.startEaseTo(servoAngle_q1);
+    servo1.write(servoAngle_q1);
     }
   }
 
@@ -198,7 +200,7 @@ void actionInstructionsFromPC() {
     servo2.startEaseTo(servoAngle_q2);
     }
   }
-
+  
   if (servoAngle_q3 != last_servoAngle_q3) {
     Serial.println(F("Servo 3 moving to position using interrupts"));
     if (servoAngle_q3<SERVO3MIN){
@@ -216,7 +218,9 @@ void actionInstructionsFromPC() {
     Serial.println(F("Servo EE moving to position using interrupts"));
     servo4.startEaseTo(servoAngle_EE);
   }
-
+  delay(servoTime_q1);
+  servo1.write(0);
+  servoAngle_q1 = 0.0;
   // Store current joint angle
   last_servoAngle_q1 = servoAngle_q1;
   last_servoAngle_q2 = servoAngle_q2;
