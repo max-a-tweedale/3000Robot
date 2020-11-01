@@ -90,8 +90,12 @@ while True:
 
         for (i, (k, v)) in enumerate(info):
             text = "{}: {}".format(k, v)
+            black = (179, 179, 255)
+            cv.line(img= frame, pt1= (int(frame_w/2),0), pt2= (int(frame_w/2),frame_h), color =black,thickness = 2, lineType = 8, shift = 0)
+
+
             cv.putText(frame, text, (10, frame_h - ((i * 20) + 20)), cv.FONT_HERSHEY_SIMPLEX, 0.6, (0, 0, 255), 2)
-            
+
             black = (179,179,255)
             cv.line(img = frame, pt1 = (int(frame_w/2),0), pt2 = (int(frame_w/2),frame_h), color = black, thickness =2, lineType = 8, shift = 0)
 

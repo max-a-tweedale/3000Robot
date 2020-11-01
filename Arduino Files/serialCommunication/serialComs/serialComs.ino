@@ -13,7 +13,7 @@
 // include these libraries for using the servo add on board. Taken from servo example code
 #include <Arduino.h>
 #include <Servo.h>
-
+#include "ServoEasing.h"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
   Definitions                                                                    *
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -30,10 +30,10 @@ const int SERVOEEMIN = 60;
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
   Instantiating Servos                                                           *
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-Servo servo1;
-Servo servo2;
-Servo servo3;
-Servo servo4;
+ServoEasing servo1;
+ServoEasing servo2;
+ServoEasing servo3;
+ServoEasing servo4;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
   Variables                                                                      *
@@ -89,17 +89,26 @@ void setup() {
   Serial.println(F("START " __FILE__ "\r\nVersion " VERSION " from " __DATE__));
 
   //Attach servo to pin
-  servo1.attach(10);
+  servo1.attach(3);
   servo2.attach(6);
-  servo3.attach(5);
-  servo4.attach(3);
+  servo3.attach(9);
+  servo4.attach(11);
 
+  servo1.setEasingType(EASE_CUBIC_IN_OUT);
+  servo2.setEasingType(EASE_CUBIC_IN_OUT);
+  servo3.setEasingType(EASE_CUBIC_IN_OUT);
+  servo4.setEasingType(EASE_CUBIC_IN_OUT);
+
+  servo1.setSpeed(40);
+  servo2.setSpeed(40);
+  servo3.setSpeed(40);
+  servo4.setSpeed(40);
   //Default positions for servos
-   servo1.write(180);
+   servo1.write(0);
    servo2.write(90);
    servo3.write(90);
    servo4.write(90);
-   
+
 
 
   // Just wait for servos to reach position
@@ -126,6 +135,7 @@ void loop() {
     actionInstructionsFromPC(); // Arrange for things to move, beep, light up
     replyToPC(); // Reply to PC
   }
+
 
 
 }
@@ -160,51 +170,51 @@ void actionInstructionsFromPC() {
   int servoTime_q2 = intFromPC2;
   int servoTime_q3 = intFromPC3;
   int servoTime_EE = intFromPC0;
-  
+
 
   // Check if the joint angle has changed!
   if (servoAngle_q1 != last_servoAngle_q1) {
     Serial.println(F("Servo 1 moving to position using interrupts"));
     if (servoAngle_q1<SERVO1MIN){
-      servo1.write(SERVO1MIN);
+      servo1.startEaseTo(SERVO1MIN);
     }
     else if (servoAngle_q1>SERVO1MAX){
-      servo1.write(SERVO1MAX);
+      servo1.startEaseTo(SERVO1MAX);
     }
     else {
-    servo1.write(servoAngle_q1);
+    servo1.startEaseTo(servoAngle_q1);
     }
   }
 
   if (servoAngle_q2 != last_servoAngle_q2) {
     Serial.println(F("Servo 2 moving to position using interrupts"));
     if (servoAngle_q2<SERVO2MIN){
-      servo2.write(SERVO2MIN);
+      servo2.startEaseTo(SERVO2MIN);
     }
     else if (servoAngle_q2>SERVO2MAX){
-      servo2.write(SERVO2MAX);
+      servo2.startEaseTo(SERVO2MAX);
     }
     else {
-    servo2.write(servoAngle_q2);
+    servo2.startEaseTo(servoAngle_q2);
     }
   }
-  
+
   if (servoAngle_q3 != last_servoAngle_q3) {
     Serial.println(F("Servo 3 moving to position using interrupts"));
     if (servoAngle_q3<SERVO3MIN){
-      servo3.write(SERVO3MIN);
+      servo3.startEaseTo(SERVO3MIN);
     }
     else if (servoAngle_q3>SERVO3MAX){
-      servo3.write(SERVO3MAX);
+      servo3.startEaseTo(SERVO3MAX);
     }
     else {
-    servo3.write(servoAngle_q3);
+    servo3.startEaseTo(servoAngle_q3);
     }
   }
 
   if (servoAngle_EE != last_servoAngle_EE) {
     Serial.println(F("Servo EE moving to position using interrupts"));
-    servo4.write(servoAngle_EE);
+    servo4.startEaseTo(servoAngle_EE);
   }
 
   // Store current joint angle
